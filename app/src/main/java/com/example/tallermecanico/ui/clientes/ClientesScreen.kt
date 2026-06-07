@@ -205,7 +205,7 @@ private fun ClienteCard(
             }
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(cliente.nombre, fontWeight = FontWeight.Bold, color = TextoPrimario)
+                Text("ID: ${cliente.id} · ${cliente.nombre}", fontWeight = FontWeight.Bold, color = TextoPrimario)
                 cliente.telefono?.let {
                     if (it.isNotBlank()) {
                         Text(it, color = TextoSecundario, style = MaterialTheme.typography.bodySmall)

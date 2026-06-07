@@ -198,7 +198,7 @@ private fun VehiculoCard(
 
             Column(Modifier.weight(1f)) {
                 Text(
-                    "${vehiculo.marca} ${vehiculo.modelo}",
+                    "ID: ${vehiculo.id} · ${vehiculo.marca} ${vehiculo.modelo}",
                     fontWeight = FontWeight.Bold,
                     color      = TextoPrimario
                 )
