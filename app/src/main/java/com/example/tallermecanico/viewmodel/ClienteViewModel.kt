@@ -44,7 +44,9 @@ class ClienteViewModel(
         val currentState = _uiState.value
         
         // Evita cargas duplicadas
-        if (currentState.isLoading || currentState.isPaginating) return
+        if (currentState.isLoading || currentState.isPaginating) {
+            if (!reset) return
+        }
         if (!reset && !currentState.hasMore) return
 
         val pageToLoad = if (reset) 1 else currentState.pageActual + 1
