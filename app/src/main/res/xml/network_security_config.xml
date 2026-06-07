@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    El backend usa HTTPS (https://mazsorra-taller.uaeftt-ute.site/).
+    No se necesita ninguna excepción especial: HTTPS funciona por defecto.
+    Se mantiene el archivo solo para compatibilidad con el Manifest.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>
