@@ -38,14 +38,14 @@ class PaginatedResponseDeserializer : JsonDeserializer<PaginatedResponse<*>> {
             )
         } else if (json.isJsonObject) {
             val jsonObject = json.asJsonObject
-            val count = jsonObject.get("count")?.asInt ?: 0
-            val next = jsonObject.get("next")?.asString
-            val previous = jsonObject.get("previous")?.asString
+            val count = jsonObject.get("count")?.let { if (it.isJsonNull) 0 else it.asInt } ?: 0
+            val next = jsonObject.get("next")?.let { if (it.isJsonNull) null else it.asString }
+            val previous = jsonObject.get("previous")?.let { if (it.isJsonNull) null else it.asString }
             val resultsElement = jsonObject.get("results")
             
             val itemType = (typeOfT as ParameterizedType).actualTypeArguments[0]
             val listType = TypeToken.getParameterized(List::class.java, itemType).type
-            val results: List<Any> = if (resultsElement != null && resultsElement.isJsonArray) {
+            val results: List<Any> = if (resultsElement != null && !resultsElement.isJsonNull && resultsElement.isJsonArray) {
                 context.deserialize(resultsElement, listType)
             } else {
                 emptyList()
