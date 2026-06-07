@@ -25,23 +25,32 @@ La URL base del backend está configurada de manera centralizada en el archivo `
 
 ---
 
-## 4. Usuarios de Prueba
-Para validar los diferentes niveles de permisos establecidos en la rúbrica, utilice las siguientes credenciales:
+## 4. Usuarios de Prueba y Matriz de Permisos (Control de Roles)
 
-### Usuario Administrador (Acceso Total: Lectura y Escritura)
-* **Correo**: `admin@taller.com`
-* **Contraseña**: `admin`
-* *Permisos*: Crear, Leer, Actualizar y Eliminar Clientes, Vehículos, Servicios, Órdenes y Facturas.
+Para validar los niveles de permisos y el control de acceso basado en roles (RBAC) establecidos en la rúbrica, la app ajusta su barra de navegación y acciones disponibles según el usuario logueado.
 
-### Usuario Mecánico (Acceso Operativo)
-* **Correo**: `mecanico@taller.com`
-* **Contraseña**: `mecanico1234`
-* *Permisos*: Leer registros, registrar/editar vehículos y actualizar estados y observaciones de órdenes de trabajo. No puede eliminar registros.
+### Credenciales de Prueba por Rol:
 
-### Usuario Cliente (Acceso de Consulta)
-* **Correo**: `cliente@taller.com`
-* **Contraseña**: `cliente1234`
-* *Permisos*: Consultar información general (sus vehículos y estado de sus órdenes). No puede crear, actualizar ni eliminar ningún elemento.
+* **Administrador**: `admin@taller.com` / `admin`
+* **Mecánico**: `mecanico@taller.com` / `mecanico1234` (o cualquier usuario nuevo editado en el panel Django con rol `mechanic`)
+* **Cliente**: `cliente@taller.com` / `cliente1234` (cualquier usuario registrado en la app móvil tiene este rol por defecto)
+
+---
+
+### Matriz Detallada de Acciones y Visibilidad:
+
+| Módulo / Pantalla | Administrador (`admin`) | Mecánico (`mechanic`) | Cliente (`client`) |
+| :--- | :--- | :--- | :--- |
+| **Órdenes de Trabajo** | **Ver todo**<br>• Crear orden (`+`) y cambiar estado.<br>• Eliminar (con confirmación). | **Ver todo**<br>• Cambiar estado y agregar notas.<br>• *Crear/Eliminar deshabilitado*. | **Solo ver sus órdenes**<br>• *Crear, editar y eliminar deshabilitado* (botón de cambio de estado oculto). |
+| **Clientes** | **CRUD Completo**<br>• Crear cliente (`+`) y editar.<br>• Eliminar (con confirmación). | **Crear y Editar**<br>• Crear cliente (`+`) y editar.<br>• *Eliminar deshabilitado* (icono oculto). | **Solo lectura**<br>• Ver datos de contacto.<br>• *Crear, editar y eliminar ocultos*. |
+| **Vehículos** | **CRUD Completo**<br>• Crear (`+`) y editar.<br>• Eliminar (con confirmación). | **Crear y Editar**<br>• Crear (`+`) y editar.<br>• *Eliminar deshabilitado* (icono oculto). | **Solo lectura**<br>• Ver sus vehículos asignados.<br>• *Crear, editar y eliminar ocultos*. |
+| **Servicios** (Catálogo) | **CRUD Completo**<br>• Crear (`+`) y editar.<br>• Eliminar (con confirmación). | **Crear y Editar**<br>• Crear (`+`) y editar.<br>• *Eliminar deshabilitado* (icono oculto). | **Sin Acceso**<br>• La pestaña **Servicios** se le oculta en la barra inferior. |
+| **Facturas y Pagos** | **Acceso Total**<br>• Crear facturas (`+`).<br>• Registrar abonos/pagos.<br>• Marcar como pagada. | **Sin Acceso**<br>• La pestaña **Facturas** se le oculta en la barra inferior. | **Solo consulta**<br>• Ver facturas y saldos.<br>• *Registrar pagos o marcar pagada deshabilitado*. |
+
+---
+
+### Seguridad en Borrados (Confirmación):
+Para evitar pérdidas accidentales de datos en producción y cumplir con los criterios de robustez, la aplicación tiene integrado un **cuadro de diálogo de confirmación** antes de realizar cualquier borrado. Al hacer clic en el botón de eliminar, el sistema solicita autorización explícita ("Cancelar" o "Eliminar") para proceder a ejecutar la llamada DELETE en el backend.
 
 ---
 
