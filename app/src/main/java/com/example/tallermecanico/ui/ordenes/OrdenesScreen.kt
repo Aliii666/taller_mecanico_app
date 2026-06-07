@@ -1,6 +1,7 @@
 package com.example.tallermecanico.ui.ordenes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +31,7 @@ import com.example.tallermecanico.viewmodel.OrdenViewModel
 @Composable
 fun OrdenesScreen(
     userRole: String,
+    onOrdenClick: (Int) -> Unit,
     vm: OrdenViewModel = viewModel()
 ) {
     val uiState by vm.uiState.collectAsState()
@@ -136,7 +138,8 @@ fun OrdenesScreen(
                                         ordenSeleccionada   = orden
                                         mostrarDialogEstado = true
                                     },
-                                    onEliminar = { vm.eliminarOrden(orden.id!!) }
+                                    onEliminar = { vm.eliminarOrden(orden.id!!) },
+                                    onOrdenClick = { onOrdenClick(orden.id!!) }
                                 )
                             }
                             
@@ -232,10 +235,13 @@ private fun OrdenCard(
     orden: OrdenTrabajo,
     esAdmin: Boolean,
     onCambiarEstado: () -> Unit,
-    onEliminar: () -> Unit
+    onEliminar: () -> Unit,
+    onOrdenClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onOrdenClick() },
         shape    = RoundedCornerShape(16.dp),
         colors   = CardDefaults.cardColors(containerColor = FondoCard),
         elevation = CardDefaults.cardElevation(4.dp)

@@ -21,7 +21,9 @@ data class OrdenUiState(
     val searchQuery: String = "",
     val filtroEstado: String? = null,
     val successMessage: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val ordenDetalle: OrdenTrabajo? = null,
+    val isLoadingDetalle: Boolean = false
 )
 
 class OrdenViewModel(
@@ -151,6 +153,26 @@ class OrdenViewModel(
                     isLoading = false,
                     error = result.message
                 )
+            }
+        }
+    }
+
+    fun cargarOrdenDetalle(id: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingDetalle = true, error = null, ordenDetalle = null)
+            when (val result = repository.getOrden(id)) {
+                is Result.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoadingDetalle = false,
+                        ordenDetalle = result.data
+                    )
+                }
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoadingDetalle = false,
+                        error = result.message
+                    )
+                }
             }
         }
     }

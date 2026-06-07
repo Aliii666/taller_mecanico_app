@@ -132,6 +132,11 @@ interface ApiService {
         @Query("search") search: String? = null
     ): Response<PaginatedResponse<OrdenTrabajo>>
 
+    @GET("api/ordenes/{id}/")
+    suspend fun getOrden(
+        @Path("id") id: Int
+    ): Response<OrdenTrabajo>
+
     @POST("api/ordenes/")
     suspend fun crearOrden(
         @Body orden: Map<String, Any?>

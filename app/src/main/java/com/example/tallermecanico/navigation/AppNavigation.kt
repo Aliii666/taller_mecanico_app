@@ -21,6 +21,7 @@ import com.example.tallermecanico.ui.auth.RegistroScreen
 import com.example.tallermecanico.ui.clientes.ClientesScreen
 import com.example.tallermecanico.ui.facturas.FacturasScreen
 import com.example.tallermecanico.ui.ordenes.OrdenesScreen
+import com.example.tallermecanico.ui.ordenes.OrdenDetalleScreen
 import com.example.tallermecanico.ui.servicios.ServiciosScreen
 import com.example.tallermecanico.ui.vehiculos.VehiculosScreen
 import com.example.tallermecanico.ui.theme.*
@@ -36,6 +37,7 @@ private object Routes {
     const val CLIENTES  = "clientes"
     const val VEHICULOS = "vehiculos"
     const val SERVICIOS = "servicios"
+    const val ORDEN_DETALLE = "orden_detalle/{ordenId}"
 }
 
 sealed class Tab(val route: String, val label: String, val icon: ImageVector) {
@@ -187,11 +189,27 @@ private fun MainScaffold(userRole: String, onLogout: () -> Unit) {
             startDestination = Routes.ORDENES,
             modifier         = Modifier.padding(paddingValues)
         ) {
-            composable(Routes.ORDENES)   { OrdenesScreen(userRole = userRole) }
+            composable(Routes.ORDENES) {
+                OrdenesScreen(
+                    userRole = userRole,
+                    onOrdenClick = { ordenId ->
+                        navController.navigate("orden_detalle/$ordenId")
+                    }
+                )
+            }
             composable(Routes.FACTURAS)  { FacturasScreen() }
             composable(Routes.CLIENTES)  { ClientesScreen(userRole = userRole) }
             composable(Routes.VEHICULOS) { VehiculosScreen(userRole = userRole) }
             composable(Routes.SERVICIOS) { ServiciosScreen(userRole = userRole) }
+            composable("orden_detalle/{ordenId}") { backStackEntry ->
+                val ordenId = backStackEntry.arguments?.getString("ordenId")?.toIntOrNull() ?: 0
+                val ordenViewModel: com.example.tallermecanico.viewmodel.OrdenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+                OrdenDetalleScreen(
+                    ordenId = ordenId,
+                    vm = ordenViewModel,
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

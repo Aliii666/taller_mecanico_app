@@ -19,6 +19,12 @@ class OrdenRepository {
         }
     }
 
+    suspend fun getOrden(id: Int): Result<OrdenTrabajo> {
+        return NetworkUtils.safeApiCall {
+            api.getOrden(id)
+        }
+    }
+
     suspend fun crearOrden(
         vehiculoId: Int,
         mecanicoId: Int?,
