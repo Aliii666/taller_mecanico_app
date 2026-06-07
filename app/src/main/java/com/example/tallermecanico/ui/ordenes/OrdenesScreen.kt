@@ -135,6 +135,7 @@ fun OrdenesScreen(
                                 OrdenCard(
                                     orden     = orden,
                                     esAdmin   = esAdmin,
+                                    puedeCambiarEstado = userRole == "admin" || userRole == "mechanic",
                                     onCambiarEstado = {
                                         ordenSeleccionada   = orden
                                         mostrarDialogEstado = true
@@ -247,6 +248,7 @@ private fun FiltrosEstado(filtroActual: String?, onFiltroChange: (String?) -> Un
 private fun OrdenCard(
     orden: OrdenTrabajo,
     esAdmin: Boolean,
+    puedeCambiarEstado: Boolean,
     onCambiarEstado: () -> Unit,
     onEliminar: () -> Unit,
     onOrdenClick: () -> Unit
@@ -295,34 +297,37 @@ private fun OrdenCard(
                 LabelValue("Observaciones", orden.observaciones)
             }
 
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                modifier              = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onCambiarEstado,
-                    modifier = Modifier.weight(1f),
-                    shape    = RoundedCornerShape(8.dp),
-                    colors   = ButtonDefaults.outlinedButtonColors(contentColor = AzulElectrico)
+            if (puedeCambiarEstado || esAdmin) {
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    modifier              = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        Icons.Default.SwapHoriz,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Cambiar Estado")
-                }
+                    if (puedeCambiarEstado) {
+                        OutlinedButton(
+                            onClick = onCambiarEstado,
+                            modifier = Modifier.weight(1f),
+                            shape    = RoundedCornerShape(8.dp),
+                            colors   = ButtonDefaults.outlinedButtonColors(contentColor = AzulElectrico)
+                        ) {
+                            Icon(
+                                Icons.Default.SwapHoriz,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("Cambiar Estado")
+                        }
+                    }
 
-                if (esAdmin) {
-                    IconButton(
-                        onClick = onEliminar,
-                        modifier = Modifier
-                            .background(RojoError.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
-                    ) {
-                        Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = RojoError)
+                    if (esAdmin) {
+                        IconButton(
+                            onClick = onEliminar,
+                            modifier = Modifier
+                                .background(RojoError.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = RojoError)
+                        }
                     }
                 }
             }
