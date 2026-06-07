@@ -30,7 +30,7 @@ Para validar los diferentes niveles de permisos establecidos en la rúbrica, uti
 
 ### Usuario Administrador (Acceso Total: Lectura y Escritura)
 * **Correo**: `admin@taller.com`
-* **Contraseña**: `admin1234`
+* **Contraseña**: `admin123`
 * *Permisos*: Crear, Leer, Actualizar y Eliminar Clientes, Vehículos, Servicios, Órdenes y Facturas.
 
 ### Usuario Mecánico (Acceso Operativo)
