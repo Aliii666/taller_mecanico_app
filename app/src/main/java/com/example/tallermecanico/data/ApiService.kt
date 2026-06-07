@@ -79,11 +79,13 @@ interface ApiService {
     ): Response<PaginatedResponse<Vehiculo>>
 
     @POST("api/vehiculos/")
+    @JvmSuppressWildcards
     suspend fun crearVehiculo(
         @Body vehiculo: Map<String, Any>
     ): Response<Vehiculo>
 
     @PUT("api/vehiculos/{id}/")
+    @JvmSuppressWildcards
     suspend fun actualizarVehiculo(
         @Path("id") id: Int,
         @Body vehiculo: Map<String, Any>
@@ -138,11 +140,13 @@ interface ApiService {
     ): Response<OrdenTrabajo>
 
     @POST("api/ordenes/")
+    @JvmSuppressWildcards
     suspend fun crearOrden(
         @Body orden: Map<String, Any?>
     ): Response<OrdenTrabajo>
 
     @PUT("api/ordenes/{id}/")
+    @JvmSuppressWildcards
     suspend fun actualizarOrden(
         @Path("id") id: Int,
         @Body orden: Map<String, Any?>
@@ -175,6 +179,7 @@ interface ApiService {
     ): Response<PaginatedResponse<Factura>>
 
     @POST("api/facturas/")
+    @JvmSuppressWildcards
     suspend fun crearFactura(
         @Body body: Map<String, Any>
     ): Response<Factura>
@@ -202,6 +207,7 @@ interface ApiService {
      * Si la suma de pagos cubre el total, el backend retorna { "factura_saldada": true }
      */
     @POST("api/pagos/")
+    @JvmSuppressWildcards
     suspend fun registrarPago(
         @Body body: Map<String, Any>
     ): Response<PagoResponse>
