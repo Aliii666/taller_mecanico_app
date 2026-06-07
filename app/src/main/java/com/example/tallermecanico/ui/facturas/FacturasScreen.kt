@@ -31,9 +31,11 @@ import com.example.tallermecanico.viewmodel.FacturaPagoViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FacturasScreen(
+    userRole: String,
     vm: FacturaPagoViewModel = viewModel()
 ) {
     val uiState by vm.uiState.collectAsState()
+    val esAdmin = userRole == "admin"
 
     var facturaSeleccionada    by remember { mutableStateOf<Factura?>(null) }
     var mostrarDialogPago      by remember { mutableStateOf(false) }
@@ -70,8 +72,10 @@ fun FacturasScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = GrisGrafito),
                 actions = {
-                    IconButton(onClick = { mostrarDialogFactura = true }) {
-                        Icon(Icons.Default.Add, contentDescription = "Emitir Factura", tint = AzulElectrico)
+                    if (esAdmin) {
+                        IconButton(onClick = { mostrarDialogFactura = true }) {
+                            Icon(Icons.Default.Add, contentDescription = "Emitir Factura", tint = AzulElectrico)
+                        }
                     }
                 }
             )
@@ -132,6 +136,7 @@ fun FacturasScreen(
                             items(uiState.facturas, key = { it.id ?: 0 }) { factura ->
                                 FacturaCard(
                                     factura           = factura,
+                                    puedeCobrar       = esAdmin,
                                     onRegistrarPago   = {
                                         facturaSeleccionada = factura
                                         mostrarDialogPago   = true
@@ -269,6 +274,7 @@ private fun FiltrosEstadoPago(filtroActual: String?, onFiltroChange: (String?) -
 @Composable
 private fun FacturaCard(
     factura: Factura,
+    puedeCobrar: Boolean,
     onRegistrarPago: () -> Unit,
     onMarcarPagada: () -> Unit
 ) {
@@ -347,7 +353,7 @@ private fun FacturaCard(
                 )
             }
 
-            if (esPendiente) {
+            if (esPendiente && puedeCobrar) {
                 Spacer(Modifier.height(12.dp))
                 Row(
                     modifier              = Modifier.fillMaxWidth(),

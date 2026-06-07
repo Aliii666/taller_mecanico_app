@@ -150,3 +150,31 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier) {
         modifier = modifier.padding(bottom = 8.dp)
     )
 }
+
+@Composable
+fun ConfirmarEliminarDialog(
+    titulo: String,
+    mensaje: String,
+    onConfirmar: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor   = FondoCard,
+        title = { Text(titulo, fontWeight = FontWeight.Bold, color = TextoPrimario) },
+        text = { Text(mensaje, color = TextoSecundario) },
+        confirmButton = {
+            Button(
+                onClick = onConfirmar,
+                colors  = ButtonDefaults.buttonColors(containerColor = RojoError)
+            ) {
+                Text("Eliminar", color = Color.White)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar", color = TextoSecundario)
+            }
+        }
+    )
+}

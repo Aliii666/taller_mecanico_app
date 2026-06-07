@@ -116,10 +116,14 @@ private fun MainScaffold(userRole: String, onLogout: () -> Unit) {
     // Las tabs visibles dependen del rol
     val tabs = buildList {
         add(Tab.Ordenes)
-        add(Tab.Facturas)
+        if (userRole.esAdmin() || userRole.esCliente()) {
+            add(Tab.Facturas)
+        }
         add(Tab.Clientes)
         add(Tab.Vehiculos)
-        if (userRole.esAdmin()) add(Tab.Servicios)
+        if (userRole.esAdmin() || userRole.esMecanico()) {
+            add(Tab.Servicios)
+        }
     }
 
     Scaffold(
@@ -197,7 +201,7 @@ private fun MainScaffold(userRole: String, onLogout: () -> Unit) {
                     }
                 )
             }
-            composable(Routes.FACTURAS)  { FacturasScreen() }
+            composable(Routes.FACTURAS)  { FacturasScreen(userRole = userRole) }
             composable(Routes.CLIENTES)  { ClientesScreen(userRole = userRole) }
             composable(Routes.VEHICULOS) { VehiculosScreen(userRole = userRole) }
             composable(Routes.SERVICIOS) { ServiciosScreen(userRole = userRole) }

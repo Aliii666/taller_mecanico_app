@@ -39,6 +39,7 @@ fun VehiculosScreen(
 
     var mostrarDialog    by remember { mutableStateOf(false) }
     var vehiculoEditando by remember { mutableStateOf<Vehiculo?>(null) }
+    var vehiculoAEliminar by remember { mutableStateOf<Vehiculo?>(null) }
 
     // Scroll State para paginación infinita
     val listState = rememberLazyListState()
@@ -119,7 +120,7 @@ fun VehiculosScreen(
                                     puedeEditar   = puedeCrear,
                                     puedeEliminar = puedeEliminar,
                                     onEditar      = { vehiculoEditando = v; mostrarDialog = true },
-                                    onEliminar    = { vm.eliminar(v.id!!) }
+                                    onEliminar    = { vehiculoAEliminar = v }
                                 )
                             }
                             
@@ -163,6 +164,18 @@ fun VehiculosScreen(
                 mostrarDialog = false
             },
             onDismiss = { mostrarDialog = false }
+        )
+    }
+
+    if (vehiculoAEliminar != null) {
+        ConfirmarEliminarDialog(
+            titulo = "Eliminar Vehículo",
+            mensaje = "¿Está seguro de que desea eliminar el vehículo ${vehiculoAEliminar!!.marca} ${vehiculoAEliminar!!.modelo} (${vehiculoAEliminar!!.placa})?",
+            onConfirmar = {
+                vm.eliminar(vehiculoAEliminar!!.id!!)
+                vehiculoAEliminar = null
+            },
+            onDismiss = { vehiculoAEliminar = null }
         )
     }
 }

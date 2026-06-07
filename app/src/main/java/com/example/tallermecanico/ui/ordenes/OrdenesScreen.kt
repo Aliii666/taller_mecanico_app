@@ -41,6 +41,7 @@ fun OrdenesScreen(
     var mostrarDialogEstado by remember { mutableStateOf(false) }
     var mostrarDialogNueva  by remember { mutableStateOf(false) }
     var filtroEstado        by remember { mutableStateOf<String?>(null) }
+    var ordenAEliminar      by remember { mutableStateOf<OrdenTrabajo?>(null) }
 
     val listState = rememberLazyListState()
 
@@ -138,7 +139,7 @@ fun OrdenesScreen(
                                         ordenSeleccionada   = orden
                                         mostrarDialogEstado = true
                                     },
-                                    onEliminar = { vm.eliminarOrden(orden.id!!) },
+                                    onEliminar = { ordenAEliminar = orden },
                                     onOrdenClick = { onOrdenClick(orden.id!!) }
                                 )
                             }
@@ -201,6 +202,18 @@ fun OrdenesScreen(
                 mostrarDialogNueva = false
             },
             onDismiss = { mostrarDialogNueva = false }
+        )
+    }
+
+    if (ordenAEliminar != null) {
+        ConfirmarEliminarDialog(
+            titulo = "Eliminar Orden",
+            mensaje = "¿Está seguro de que desea eliminar la orden de trabajo #${ordenAEliminar!!.id}?",
+            onConfirmar = {
+                vm.eliminarOrden(ordenAEliminar!!.id!!)
+                ordenAEliminar = null
+            },
+            onDismiss = { ordenAEliminar = null }
         )
     }
 }

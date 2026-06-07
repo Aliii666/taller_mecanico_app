@@ -34,9 +34,11 @@ fun ClientesScreen(
 ) {
     val uiState by vm.uiState.collectAsState()
     val esAdmin = userRole == "admin"
+    val puedeCrear = userRole == "admin" || userRole == "mechanic"
 
     var mostrarDialog     by remember { mutableStateOf(false) }
     var clienteEditando   by remember { mutableStateOf<Cliente?>(null) }
+    var clienteAEliminar   by remember { mutableStateOf<Cliente?>(null) }
 
     // Scroll State para paginación infinita
     val listState = rememberLazyListState()
@@ -64,7 +66,7 @@ fun ClientesScreen(
                 title = { Text("Clientes", fontWeight = FontWeight.Bold, color = TextoPrimario) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = GrisGrafito),
                 actions = {
-                    if (esAdmin) {
+                    if (puedeCrear) {
                         IconButton(onClick = { clienteEditando = null; mostrarDialog = true }) {
                             Icon(Icons.Default.Add, contentDescription = "Nuevo cliente", tint = AzulElectrico)
                         }
@@ -119,9 +121,10 @@ fun ClientesScreen(
                             items(uiState.clientes, key = { it.id ?: 0 }) { cliente ->
                                 ClienteCard(
                                     cliente    = cliente,
-                                    esAdmin    = esAdmin,
+                                    puedeEditar = puedeCrear,
+                                    puedeEliminar = esAdmin,
                                     onEditar   = { clienteEditando = cliente; mostrarDialog = true },
-                                    onEliminar = { vm.eliminarCliente(cliente.id!!) }
+                                    onEliminar = { clienteAEliminar = cliente }
                                 )
                             }
                             
@@ -174,12 +177,25 @@ fun ClientesScreen(
             onDismiss = { mostrarDialog = false }
         )
     }
+
+    if (clienteAEliminar != null) {
+        ConfirmarEliminarDialog(
+            titulo = "Eliminar Cliente",
+            mensaje = "¿Está seguro de que desea eliminar al cliente ${clienteAEliminar!!.nombre}?",
+            onConfirmar = {
+                vm.eliminarCliente(clienteAEliminar!!.id!!)
+                clienteAEliminar = null
+            },
+            onDismiss = { clienteAEliminar = null }
+        )
+    }
 }
 
 @Composable
 private fun ClienteCard(
     cliente: Cliente,
-    esAdmin: Boolean,
+    puedeEditar: Boolean,
+    puedeEliminar: Boolean,
     onEditar: () -> Unit,
     onEliminar: () -> Unit
 ) {
@@ -224,10 +240,12 @@ private fun ClienteCard(
             }
 
             Row {
-                IconButton(onClick = onEditar) {
-                    Icon(Icons.Default.Edit, contentDescription = "Editar", tint = AzulElectrico)
+                if (puedeEditar) {
+                    IconButton(onClick = onEditar) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = AzulElectrico)
+                    }
                 }
-                if (esAdmin) {
+                if (puedeEliminar) {
                     IconButton(onClick = onEliminar) {
                         Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = RojoError)
                     }

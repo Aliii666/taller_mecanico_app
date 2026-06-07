@@ -33,9 +33,11 @@ fun ServiciosScreen(
 ) {
     val uiState by vm.uiState.collectAsState()
     val esAdmin = userRole == "admin"
+    val puedeEditar = userRole == "admin" || userRole == "mechanic"
 
     var mostrarDialog    by remember { mutableStateOf(false) }
     var servicioEditando by remember { mutableStateOf<Servicio?>(null) }
+    var servicioAEliminar by remember { mutableStateOf<Servicio?>(null) }
 
     // Scroll State para paginación infinita
     val listState = rememberLazyListState()
@@ -62,7 +64,7 @@ fun ServiciosScreen(
                 title  = { Text("Catálogo de Servicios", fontWeight = FontWeight.Bold, color = TextoPrimario) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = GrisGrafito),
                 actions = {
-                    if (esAdmin) {
+                    if (puedeEditar) {
                         IconButton(onClick = { servicioEditando = null; mostrarDialog = true }) {
                             Icon(Icons.Default.Add, contentDescription = "Nuevo servicio", tint = AzulElectrico)
                         }
@@ -113,9 +115,10 @@ fun ServiciosScreen(
                             items(uiState.servicios, key = { it.id ?: 0 }) { s ->
                                 ServicioCard(
                                     servicio  = s,
-                                    esAdmin   = esAdmin,
+                                    puedeEditar = puedeEditar,
+                                    puedeEliminar = esAdmin,
                                     onEditar  = { servicioEditando = s; mostrarDialog = true },
-                                    onEliminar = { vm.eliminar(s.id!!) }
+                                    onEliminar = { servicioAEliminar = s }
                                 )
                             }
                             
@@ -160,12 +163,25 @@ fun ServiciosScreen(
             onDismiss = { mostrarDialog = false }
         )
     }
+
+    if (servicioAEliminar != null) {
+        ConfirmarEliminarDialog(
+            titulo = "Eliminar Servicio",
+            mensaje = "¿Está seguro de que desea eliminar el servicio ${servicioAEliminar!!.nombre}?",
+            onConfirmar = {
+                vm.eliminar(servicioAEliminar!!.id!!)
+                servicioAEliminar = null
+            },
+            onDismiss = { servicioAEliminar = null }
+        )
+    }
 }
 
 @Composable
 private fun ServicioCard(
     servicio: Servicio,
-    esAdmin: Boolean,
+    puedeEditar: Boolean,
+    puedeEliminar: Boolean,
     onEditar: () -> Unit,
     onEliminar: () -> Unit
 ) {
@@ -198,11 +214,13 @@ private fun ServicioCard(
                 Text("S/ %.2f".format(servicio.precio), color = NaranjaIndustrial, fontWeight = FontWeight.Bold)
             }
 
-            if (esAdmin) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (puedeEditar) {
                     IconButton(onClick = onEditar) {
                         Icon(Icons.Default.Edit, contentDescription = "Editar", tint = AzulElectrico)
                     }
+                }
+                if (puedeEliminar) {
                     IconButton(onClick = onEliminar) {
                         Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = RojoError)
                     }
